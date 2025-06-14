@@ -14,7 +14,7 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
-
+import constants
 
 # Download necessary NLTK resources
 nltk.download("stopwords")
@@ -22,7 +22,7 @@ nltk.download("wordnet")
 nltk.download("punkt")
 nltk.download("omw-1.4")
 
-class TextProcessor:
+class TextProcessor(BaseEstimator, TransformerMixin):
     """
         Custom text preprocessing transformer for scikit-learn Pipeline.
         Includes:
@@ -40,7 +40,7 @@ class TextProcessor:
         text = text.lower()
 
         # Remove digits
-        text = re.sub(r"\d+", " ", text)
+        text = re.sub(constants.REGEX_WORDS_ONLY, " ", text)
 
         # remove punctuation
         text = text.translate(str.maketrans('', '', string.punctuation))
@@ -68,8 +68,8 @@ class TextClassifierTrainer:
        - Joblib for model export
    """
     def __init__(self):
-        self.model_path = "../app/models/text_classifier.pkl"
-        self.labels_path = "../app/models/text_labels.pkl"
+        self.model_path = constants.MODEL_STORE_PATH
+        self.labels_path = constants.LABELS_STORE_PATH
         self.pipeline = Pipeline([
             ('preprocess', TextProcessor()),
             ("tfidf", TfidfVectorizer(max_features=10000)),
@@ -82,7 +82,7 @@ class TextClassifierTrainer:
            Loads GoEmotions dataset and filters to single-label samples.
            Returns a pandas DataFrame with text and string labels.
         """
-        dataset = load_dataset("google-research-datasets/go_emotions", "simplified", split="train")
+        dataset = load_dataset(constants.DATASET_NAME, constants.DATASET_VERSION, split="train")
         print("GoEmotions dataset loaded")
         dataset = dataset.filter(lambda x: len(x["labels"]) == 1)
         print("GoEmotions dataset filtered")
