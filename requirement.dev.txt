@@ -1,0 +1,6 @@
+# install everything from requirement.txt
+-r requirement.txt
+pytest
+httpx
+black
+isort
