@@ -1,5 +1,7 @@
 REGEX_WORDS_ONLY = r"\d+"
 MODEL_STORE_PATH = "../app/models/text_classifier.pkl"
 LABELS_STORE_PATH = "../app/models/text_labels.pkl"
+MODEL_LOAD_PATH = "./app/models/text_classifier.pkl"
+LABELS_LOAD_PATH = "./app/models/text_labels.pkl"
 DATASET_NAME = "google-research-datasets/go_emotions"
 DATASET_VERSION = "simplified"
