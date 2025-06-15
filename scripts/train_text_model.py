@@ -15,14 +15,14 @@ from app.utils.text import TextProcessor
 class TextClassifierTrainer:
     """
        Class to train and save a text classification model using:
-       - GoEmotions dataset
+       - GoEmotions dataseta
        - Preprocessing pipeline
        - Logistic Regression
        - Joblib for model export
    """
     def __init__(self):
-        self.model_path = constants.MODEL_STORE_PATH
-        self.labels_path = constants.LABELS_STORE_PATH
+        self.model_path = constants.TEXT_MODEL_STORE_PATH
+        self.labels_path = constants.TEXT_LABELS_STORE_PATH
         self.pipeline = Pipeline([
             ('preprocess', TextProcessor()),
             ("tfidf", TfidfVectorizer(max_features=10000)),
@@ -35,7 +35,7 @@ class TextClassifierTrainer:
            Loads GoEmotions dataset and filters to single-label samples.
            Returns a pandas DataFrame with text and string labels.
         """
-        dataset = load_dataset(constants.DATASET_NAME, constants.DATASET_VERSION, split="train")
+        dataset = load_dataset(constants.TEXT_DATASET_NAME, constants.TEXT_DATASET_VERSION, split="train")
         print("GoEmotions dataset loaded")
         dataset = dataset.filter(lambda x: len(x["labels"]) == 1)
         print("GoEmotions dataset filtered")

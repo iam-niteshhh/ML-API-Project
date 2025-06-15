@@ -9,8 +9,8 @@ from app.utils.text import TextProcessor
 
 class TextClassifier:
     def __init__(self):
-        model_path = constants.MODEL_LOAD_PATH
-        labels_path = constants.MODEL_LOAD_PATH
+        model_path = constants.TEXT_MODEL_LOAD_PATH
+        labels_path = constants.TEXT_LABELS_LOAD_PATH
         print("Loading model...", model_path)
         print("Loading labels...", labels_path)
 
