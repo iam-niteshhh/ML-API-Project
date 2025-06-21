@@ -1,0 +1,35 @@
+# Ignore Python cache
+__pycache__/
+*.py[cod]
+*.so
+
+# Ignore Jupyter notebooks
+*.ipynb
+
+# Ignore system and IDE files
+.DS_Store
+.vscode/
+*.log
+
+# Ignore Git
+.git/
+.gitignore
+
+# Ignore virtual environments
+.venv/
+env/
+venv/
+
+# Ignore test outputs
+*.pytest_cache/
+.coverage
+htmlcov/
+
+# Ignore model outputs (if you're storing them locally)
+# *.pkl
+# *.joblib
+# *.h5
+
+# Ignore Docker-related stuff we don’t need in the image
+docker-compose.yml
+Dockerfile

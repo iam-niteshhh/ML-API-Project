@@ -1,11 +1,14 @@
 import joblib
 import os
 from typing import List
+import sys
 
 # Custom Imports
 import constants
 from app.utils.text import TextProcessor
 
+# Register the module path to ensure pickle finds it
+sys.modules['__main__'].TextProcessor = TextProcessor
 
 class TextClassifier:
     def __init__(self):
