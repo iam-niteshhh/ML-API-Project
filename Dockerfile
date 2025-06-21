@@ -1,5 +1,5 @@
 # Use official Python 3.12 slim image
-FROM python:3.12-alpine
+FROM python:3.12-slim
 
 # Metadata
 LABEL authors="Nitesh Saini"
@@ -12,7 +12,7 @@ ENV PYTHONUNBUFFERED=1
 WORKDIR /ml-api
 
 # Install OS-level dependencies
-RUN apk update && apk install -y gcc
+RUN apt-get update && apt-get install -y gcc
 
 # Install Python dependencies
 COPY requirement.txt .
