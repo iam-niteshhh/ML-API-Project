@@ -45,18 +45,24 @@ class ImageTrainer:
         Builds a simple CNN model for image classification.
         """
         self.model = Sequential([
-            Conv2D(32, (3, 3), activation='relu', input_shape=(32, 32, 3)),
+            Conv2D(32, (3, 3), activation='relu', padding='same', input_shape=(32, 32, 3)),
+            Conv2D(32, (3, 3), activation='relu', padding='same'),
             MaxPooling2D(2, 2),
             Dropout(0.25),
 
-            Conv2D(64, (3, 3), activation='relu'),
+            Conv2D(64, (3, 3), activation='relu', padding='same'),
+            Conv2D(64, (3, 3), activation='relu', padding='same'),
+            MaxPooling2D(2, 2),
+            Dropout(0.25),
+
+            Conv2D(128, (3, 3), activation='relu', padding='same'),
             MaxPooling2D(2, 2),
             Dropout(0.25),
 
             Flatten(),
-            Dense(256, activation='relu'),
+            Dense(512, activation='relu'),
             Dropout(0.5),
-            Dense(len(self.coarse_label_mapping), activation='softmax')  # Output = number of coarse categories
+            Dense(len(self.coarse_label_mapping), activation='softmax')
         ])
 
         self.model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
@@ -91,7 +97,7 @@ class ImageTrainer:
         os.makedirs(os.path.dirname(self.model_path), exist_ok=True)
         # Save trained model and labels
         self.model.save(self.model_path)
-        joblib.dump(self.coarse_labels, self.label_path)
+        joblib.dump(self.coarse_label_mapping, self.label_path)
         print(f"> Model saved to {self.model_path}")
         print(f"> Coarse label list saved to {self.label_path}")
 
@@ -114,12 +120,14 @@ class ImageTrainer:
                 print(f"Could not set memory growth: {e}")
         else:
             print("No GPU detected, running on CPU.")
+
     def run(self):
         """
             Main entry point to execute the full training pipeline.
         """
         print("0. Checking for GPU availability...")
-        self.check_gpu()
+        print("0.0 Skipping Check for GPU availability...")
+        # self.check_gpu()
 
         print("1. Loading data...")
         x_train, y_train, x_test, y_test = self.loads_data()
@@ -133,7 +141,7 @@ class ImageTrainer:
             y_train=y_train,
             x_test=x_test,
             y_test=y_test,
-            epochs=15,
+            epochs=30,
             batch_size=64
         )
 

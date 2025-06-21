@@ -6,8 +6,10 @@ TEXT_LABELS_LOAD_PATH = "./app/models/text_labels.pkl"
 TEXT_DATASET_NAME = "google-research-datasets/go_emotions"
 TEXT_DATASET_VERSION = "simplified"
 
-IMAGE_MODEL_STORE_PATH = "./app/models/image_classifier.h5"
-IMAGE_LABEL_STORE_PATH = "./app/models/image_labels.pkl"
+IMAGE_MODEL_STORE_PATH = "../app/models/image_classifier.h5"
+IMAGE_LABEL_STORE_PATH = "../app/models/image_labels.pkl"
+IMAGE_MODEL_LOAD_PATH = "./app/models/image_classifier.h5"
+IMAGE_LABELS_LOAD_PATH = "./app/models/image_labels.pkl"
 
 COARSE_LABEL_MAPPING = {
     0: "aquatic mammals",
