@@ -18,12 +18,7 @@ jobs:
         with:
           python-version: 3.12
 
-      - name: Install Dependencies
-        run: |
-          pip install -r requirements.txt
-
       - name: Deploy to Render (Test)
-        uses: render-examples/gh-actions-deploy@v1
-        with:
-          api-key: ${{ secrets.RENDER_API_KEY_TEST }}
-          service-id: ${{ secrets.RENDER_SERVICE_ID_TEST }}
+        if: github.ref == 'refs/heads/test'
+        run: |
+            curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_TEST }}
