@@ -29,6 +29,9 @@ jobs:
           echo "Starting deploy to Render for branch: ${{ github.ref }}"
           echo "Sending POST request to Render Deploy Hook..."
 
+          # TEMPORARY: Print the raw secret for debugging - REMOVE IMMEDIATELY AFTER USE!
+          echo "DEBUG: Raw secret value: '${{ secrets.RENDER_DEPLOY_HOOK_TEST }}'"
+
           # Perform the request and capture both response body and HTTP status
           # Use -v for verbose output (shows connection details, headers, etc.)
           # Use || true to prevent the step from failing immediately on curl exit code 3
