@@ -26,15 +26,11 @@ jobs:
 
       - name: Trigger Deploy to Render (Test)
         run: |
-          set -euo pipefail
           echo "Starting deploy to Render for branch: ${{ github.ref }}"
           echo "Sending POST request to Render Deploy Hook..."
-          
-          response=$(curl -s -w "\n%{http_code}" -X POST "${{ secrets.RENDER_DEPLOY_HOOK_TEST }}") || {
-            echo "Curl command failed unexpectedly."
-            exit 3
-          }
 
+          # Perform the request and capture both response body and HTTP status
+          response=$(curl -s -w "\n%{http_code}" -X POST "${{ secrets.RENDER_DEPLOY_HOOK_TEST }}")
           body=$(echo "$response" | head -n -1)
           status=$(echo "$response" | tail -n 1)
 
@@ -43,9 +39,10 @@ jobs:
           echo ""
           echo "HTTP Status Code: $status"
 
+          # Always print even if it's suspended
           if [ "$status" -ne 200 ]; then
-            echo "Deployment failed with HTTP $status"
-            echo "Full response from Render: $body"
+            echo " Deployment returned non-200 status"
+            echo "Reason: $body"
             exit 1
           else
             echo "Deployment successfully triggered!"
