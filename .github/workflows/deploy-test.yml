@@ -19,6 +19,9 @@ jobs:
           python-version: 3.12
 
       - name: Deploy to Render (Test)
-        if: github.ref == 'refs/heads/test'
         run: |
-            curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_TEST }}
+          echo "Triggering Render deploy for test branch..."
+          curl -v -X POST "${{ secrets.RENDER_DEPLOY_HOOK_TEST }}" || {
+            echo "Render deploy failed"
+            exit 1
+          }
