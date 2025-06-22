@@ -30,19 +30,42 @@ jobs:
           echo "Sending POST request to Render Deploy Hook..."
 
           # Perform the request and capture both response body and HTTP status
-          response=$(curl -s -w "\n%{http_code}" -X POST "${{ secrets.RENDER_DEPLOY_HOOK_TEST }}")
-          body=$(echo "$response" | head -n -1)
-          status=$(echo "$response" | tail -n 1)
+          # Use -v for verbose output (shows connection details, headers, etc.)
+          # Use || true to prevent the step from failing immediately on curl exit code 3
+          response=$(curl -s -v -w "\n%{http_code}" -X POST "${{ secrets.RENDER_DEPLOY_HOOK_TEST }}" || true)
+          
+          # Check if the response contains the HTTP status code (meaning a successful connection was made)
+          # The last line of 'response' is the status code if a connection was made.
+          # If the connection failed before getting a status, 'response' will contain curl's error messages.
+          
+          # Try to extract body and status, handling cases where 'response' might just be error messages
+          body_and_status_lines=$(echo "$response" | wc -l)
+          if [ "$body_and_status_lines" -gt 1 ]; then
+            body=$(echo "$response" | head -n -1)
+            status=$(echo "$response" | tail -n 1)
+          else
+            # If only one line or no lines, it likely means a connection error from curl,
+            # and 'response' contains curl's error message.
+            body="$response"
+            status="000" # Indicating no HTTP status received (connection error)
+          fi
 
-          echo "Response Body:"
+          echo "Full Curl Output (including potential errors):"
+          echo "$response"
+          echo ""
+          echo "Response Body (or Curl Error Message):"
           echo "$body"
           echo ""
-          echo "HTTP Status Code: $status"
+          echo "HTTP Status Code: $status (000 indicates connection error)"
 
           # Always print even if it's suspended
           if [ "$status" -ne 200 ]; then
-            echo " Deployment returned non-200 status"
-            echo "Reason: $body"
+            if [ "$status" -eq 000 ]; then
+              echo " Deployment failed due to connection error (Render service likely suspended or hook invalid)."
+            else
+              echo " Deployment returned non-200 status."
+            fi
+            echo "Reason/Raw Output: $body"
             exit 1
           else
             echo "Deployment successfully triggered!"
