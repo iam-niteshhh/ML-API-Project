@@ -14,7 +14,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - run: echo "🗂 Code checked out from branch ${{ github.ref }}"
+      - run: echo "Code checked out from branch ${{ github.ref }}"
 
       - name: Set up Python 3.12
         uses: actions/setup-python@v4
@@ -26,21 +26,27 @@ jobs:
 
       - name: Trigger Deploy to Render (Test)
         run: |
+          set -euo pipefail
           echo "Starting deploy to Render for branch: ${{ github.ref }}"
           echo "Sending POST request to Render Deploy Hook..."
+          
+          response=$(curl -s -w "\n%{http_code}" -X POST "${{ secrets.RENDER_DEPLOY_HOOK_TEST }}") || {
+            echo "Curl command failed unexpectedly."
+            exit 3
+          }
 
-          # Send POST request and capture response and status
-          response=$(curl -s -w "\n%{http_code}" -X POST "${{ secrets.RENDER_DEPLOY_HOOK_TEST }}")
           body=$(echo "$response" | head -n -1)
           status=$(echo "$response" | tail -n 1)
 
           echo "Response Body:"
           echo "$body"
           echo ""
-          echo "📡 HTTP Status Code: $status"
+          echo "HTTP Status Code: $status"
 
-          # Error handling
           if [ "$status" -ne 200 ]; then
             echo "Deployment failed with HTTP $status"
-            echo "Exiting pip
-
+            echo "Full response from Render: $body"
+            exit 1
+          else
+            echo "Deployment successfully triggered!"
+          fi
